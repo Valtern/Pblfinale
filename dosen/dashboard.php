@@ -396,11 +396,12 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
         </li>
     </ul>
     <div class="d-flex align-items-center">
-        <li class="nav-link">
-    <a href="#" role="button" data-bs-toggle="modal" data-bs-target="#mailModal">
-        <i class="fas fa-envelope fa-2x"></i>
-    </a>
-        </li>
+      
+<a href="#" role="button" data-bs-toggle="modal" data-bs-target="#mailModal">
+    <i class="fas fa-envelope fa-lg text-dark"></i>
+</a>
+
+    
 
         <?php
         try {
