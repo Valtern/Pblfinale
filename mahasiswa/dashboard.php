@@ -211,24 +211,27 @@ document.querySelector('form[action="../func/report.php"]').addEventListener('su
 
 function viewDetail(reportId) {
     fetch(`../func/get_report_detail.php?id=${reportId}`)
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Switch to diajukan tab and populate data
-            document.querySelector('[data-bs-target="#history-diajukan"]').click();
-            
-            // Populate the detail view with the returned data
-            document.querySelector('#detail-bukti').src = '../uploads/evidence/' + data.bukti;
-            document.querySelector('#detail-nama').textContent = data.name;
-            document.querySelector('#detail-pelanggaran').textContent = data.nama_pelanggaran;
-            document.querySelector('#detail-waktu').textContent = new Date(data.waktu).toLocaleString();
-            document.querySelector('#detail-lokasi').textContent = data.lokasi;
-        } else {
-            alert('Error loading report details');
-        }
-    })
-    .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.querySelector('#detail-modal-bukti').src = '../uploads/evidence/' + data.data.bukti;
+                document.querySelector('#detail-modal-pelanggaran').textContent = data.data.nama_pelanggaran;
+                document.querySelector('#detail-modal-waktu').textContent = new Date(data.data.waktu).toLocaleString('id-ID');
+                document.querySelector('#detail-modal-lokasi').textContent = data.data.lokasi;
+                document.querySelector('#detail-modal-bobot').textContent = data.data.bobot;
+                document.querySelector('#detail-modal-status').textContent = data.data.status;
+                
+                new bootstrap.Modal(document.querySelector('#detailReportModal')).show();
+            } else {
+                alert('Error loading report details: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to load report details');
+        });
 }
+
 
 function viewSubmittedDetail(reportId) {
     fetch(`../func/get_submitted_report.php?id=${reportId}`)
@@ -810,8 +813,8 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
 
 <div class="tab-pane fade p-3 border rounded bg-light" id="v-pills-history" role="tabpanel" aria-labelledby="v-pills-history-tab">
     <div class="nav nav-tabs mb-4" role="tablist">
-        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#history-diterima" type="button" role="tab">Diterima</button>
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#history-diajukan" type="button" role="tab">Diajukan</button>
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#history-diterima" type="button" role="tab">Received</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#history-diajukan" type="button" role="tab">Filed</button>
     </div>
 
     <div class="tab-content">
@@ -862,6 +865,42 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
                 ?>
             </tbody>
         </table>
+    </div>
+</div>
+<div class="modal fade" id="detailReportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Report Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <h6>Evidence</h6>
+                    <img id="detail-modal-bukti" class="img-fluid rounded" alt="Evidence">
+                </div>
+                <div class="mb-3">
+                    <h6>Violation Name</h6>
+                    <p id="detail-modal-pelanggaran" class="text-muted"></p>
+                </div>
+                <div class="mb-3">
+                    <h6>Time</h6>
+                    <p id="detail-modal-waktu" class="text-muted"></p>
+                </div>
+                <div class="mb-3">
+                    <h6>Location</h6>
+                    <p id="detail-modal-lokasi" class="text-muted"></p>
+                </div>
+                <div class="mb-3">
+                    <h6>Weight</h6>
+                    <p id="detail-modal-bobot" class="text-muted"></p>
+                </div>
+                <div class="mb-3">
+                    <h6>Status</h6>
+                    <p id="detail-modal-status" class="text-muted"></p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

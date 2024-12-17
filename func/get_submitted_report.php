@@ -8,10 +8,33 @@ if (!isset($_SESSION['user_id']) || !isset($_GET['id'])) {
 }
 
 try {
-    $query = "SELECT r.* 
-              FROM report r 
-              WHERE r.id = :report_id 
-              AND r.name = (SELECT nama_lengkap FROM mahasiswa WHERE id = :user_id)";
+    $query = "
+        WITH UserReports AS (
+            SELECT 
+                r.*,
+                m.nama_lengkap,
+                COUNT(*) OVER (PARTITION BY r.nama_pelanggaran) as violation_count,
+                ROW_NUMBER() OVER (PARTITION BY r.name ORDER BY r.waktu DESC) as report_rank
+            FROM report r
+            JOIN mahasiswa m ON r.name = m.nama_lengkap
+            WHERE m.id = :user_id
+        ),
+        ViolationStats AS (
+            SELECT 
+                nama_pelanggaran,
+                COUNT(*) as total_occurrences,
+                MAX(waktu) as last_occurrence
+            FROM report
+            GROUP BY nama_pelanggaran
+        )
+        SELECT 
+            ur.*,
+            vs.total_occurrences,
+            vs.last_occurrence,
+            (SELECT COUNT(*) FROM report WHERE waktu > ur.waktu) as newer_reports
+        FROM UserReports ur
+        LEFT JOIN ViolationStats vs ON ur.nama_pelanggaran = vs.nama_pelanggaran
+        WHERE ur.id = :report_id";
     
     $stmt = $koneksi->prepare($query);
     $stmt->bindParam(':report_id', $_GET['id']);

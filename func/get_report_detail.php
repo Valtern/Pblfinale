@@ -8,10 +8,21 @@ if (!isset($_SESSION['user_id']) || !isset($_GET['id'])) {
 }
 
 try {
-    $query = "SELECT r.*, h.bobot, h.status 
-              FROM report r 
-              INNER JOIN history h ON h.fk_report = r.id 
-              WHERE r.id = :report_id";
+    // Use CTE to handle data type conversion safely
+    $query = "
+        WITH ReportData AS (
+            SELECT 
+                r.*,
+                h.status,
+                CASE 
+                    WHEN ISNUMERIC(h.bobot) = 1 THEN CAST(h.bobot AS FLOAT)
+                    ELSE NULL 
+                END as bobot
+            FROM report r
+            INNER JOIN history h ON h.fk_report = r.id
+            WHERE r.id = :report_id
+        )
+        SELECT * FROM ReportData";
     
     $stmt = $koneksi->prepare($query);
     $stmt->bindParam(':report_id', $_GET['id']);
@@ -34,4 +45,5 @@ try {
         'message' => $e->getMessage()
     ]);
 }
+
 ?>

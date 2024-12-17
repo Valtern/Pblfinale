@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Add click handlers to check buttons
-    document.querySelectorAll('.btn-warning').forEach(button => {
+    document.querySelectorAll('.checks-btn').forEach(button => {
         button.addEventListener('click', showCheckCompensation);
     });
 });
