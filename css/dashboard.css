@@ -34,3 +34,27 @@
 .tab-pane {
     width: 100%; /* Full width of container */
 }
+
+.notification-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.notification-card .card {
+    margin-bottom: 1rem;
+}
+
+.unread-highlight {
+    border-left: 4px solid #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.notification-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.content-section {
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+

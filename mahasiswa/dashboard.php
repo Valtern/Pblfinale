@@ -130,6 +130,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    // Store notification states in memory
+    let notificationStates = new Map();
+    
+    // Handle notification card clicks
+    document.querySelectorAll('.notification-card').forEach(card => {
+        const contentSection = card.querySelector('.content-section');
+        const notificationId = card.dataset.notificationId;
+        
+        // Initialize notification state
+        notificationStates.set(notificationId, false);
+        
+        card.addEventListener('click', function() {
+            // Toggle content visibility regardless of read status
+            contentSection.style.display = contentSection.style.display === 'none' ? 'block' : 'none';
+            
+            // Mark as read if unread
+            if (!notificationStates.get(notificationId)) {
+                notificationStates.set(notificationId, true);
+                card.classList.remove('unread-highlight');
+            }
+        });
+    });
+});
+
+function showUnreadNotifications() {
+    document.querySelectorAll('.notification-card').forEach(card => {
+        const notificationId = card.dataset.notificationId;
+        if (!notificationStates.get(notificationId)) {
+            card.classList.add('unread-highlight');
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function showAllNotifications() {
+    document.querySelectorAll('.notification-card').forEach(card => {
+        card.style.display = 'block';
+    });
+}
+
 
 document.getElementById('profile-photo').addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -714,36 +757,42 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
     </div>
     
     <div class="notification-list">
-        <?php
-        try {
-            $user_id = $_SESSION['user_id'];
-            $query = "SELECT title, content, id FROM mail_notif_mahasiswa 
-                     WHERE mail_type = :user_id 
-                     ORDER BY id DESC";
-            
-            $stmt = $koneksi->prepare($query);
-            $stmt->bindParam(':user_id', $user_id);
-            $stmt->execute();
-            
-            while ($notification = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                echo '<div class="card mb-3">
-                        <div class="card-body">
-                            <h6 class="card-title">' . htmlspecialchars($notification['title']) . '</h6>
-                            <p class="card-text text-muted">' . htmlspecialchars($notification['content']) . '</p>
+    <?php 
+    try {
+        $user_id = $_SESSION['user_id'];
+        $query = "SELECT id, title, content FROM mail_notif_mahasiswa 
+                 WHERE mail_type = :user_id 
+                 ORDER BY id DESC";
+        $stmt = $koneksi->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        
+        while ($notification = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            echo '<div class="notification-card" data-notification-id="' . $notification['id'] . '">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">' . htmlspecialchars($notification['title']) . '</h6>
                         </div>
-                    </div>';
-            }
-            
-            if ($stmt->rowCount() == 0) {
-                echo '<div class="alert alert-info">There is No notification</div>';
-            }
-            
-        } catch (PDOException $e) {
-            echo '<div class="alert alert-danger">Error fetching notifications: ' . $e->getMessage() . '</div>';
+                        <div class="content-section" style="display: none;">
+                            <div class="card-body">
+                                <p class="card-text">' . htmlspecialchars($notification['content']) . '</p>
+                            </div>
+                        </div>
+                    </div>
+                  </div>';
         }
-        ?>
-    </div>
+        
+        if ($stmt->rowCount() == 0) {
+            echo '<div class="alert alert-info">There is No notification</div>';
+        }
+    } catch (PDOException $e) {
+        echo '<div class="alert alert-danger">Error fetching notifications: ' . $e->getMessage() . '</div>';
+    }
+    ?>
 </div>
+
+</div>
+
 
 <div class="tab-pane fade p-3 border rounded bg-light" id="v-pills-report" role="tabpanel" aria-labelledby="v-pills-report-tab">
     <div class="card">

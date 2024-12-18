@@ -154,7 +154,42 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.notification-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const contentSection = this.querySelector('.content-section');
+            const notificationId = this.dataset.notificationId;
+            
+            // Toggle content visibility
+            contentSection.style.display = contentSection.style.display === 'none' ? 'block' : 'none';
+            
+            // Mark as read if unread
+            if (this.classList.contains('unread-highlight')) {
+                fetch('../func/update_notification_admin.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `notification_id=${notificationId}`
+                });
+                this.classList.remove('unread-highlight');
+                this.querySelector('.badge')?.remove();
+            }
+        });
+    });
+});
 
+function showUnreadNotifications() {
+    document.querySelectorAll('.notification-card').forEach(card => {
+        card.style.display = card.classList.contains('unread-highlight') ? 'block' : 'none';
+    });
+}
+
+function showAllNotifications() {
+    document.querySelectorAll('.notification-card').forEach(card => {
+        card.style.display = 'block';
+    });
+}
 function switchToProfile() {
     document.querySelector('#v-pills-profile-tab').click();
 }
@@ -826,30 +861,36 @@ function showCheckCompensation() {
     </div>
     
     <div class="notification-list">
-        <?php
+        <?php 
         try {
             $user_id = $_SESSION['user_id'];
-            $query = "SELECT title, content, id FROM mail_notif_admin 
+            $query = "SELECT id, title, content, is_read FROM mail_notif_admin 
                      WHERE mail_type = :user_id 
                      ORDER BY id DESC";
-            
             $stmt = $koneksi->prepare($query);
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
             
             while ($notification = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                echo '<div class="card mb-3">
-                        <div class="card-body">
-                            <h6 class="card-title">' . htmlspecialchars($notification['title']) . '</h6>
-                            <p class="card-text text-muted">' . htmlspecialchars($notification['content']) . '</p>
+                $unreadClass = $notification['is_read'] ? '' : 'unread-highlight';
+                echo '<div class="notification-card ' . $unreadClass . '" data-notification-id="' . $notification['id'] . '">
+                        <div class="card mb-3">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="card-title mb-0">' . htmlspecialchars($notification['title']) . '</h6>
+                                ' . (!$notification['is_read'] ? '<span class="badge bg-primary">New</span>' : '') . '
+                            </div>
+                            <div class="content-section" style="display: none;">
+                                <div class="card-body">
+                                    <p class="card-text">' . htmlspecialchars($notification['content']) . '</p>
+                                </div>
+                            </div>
                         </div>
                     </div>';
             }
             
             if ($stmt->rowCount() == 0) {
-                echo '<div class="alert alert-info">Tidak ada notifikasi</div>';
+                echo '<div class="alert alert-info">There is No notification</div>';
             }
-            
         } catch (PDOException $e) {
             echo '<div class="alert alert-danger">Error fetching notifications: ' . $e->getMessage() . '</div>';
         }

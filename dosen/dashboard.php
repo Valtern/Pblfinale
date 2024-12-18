@@ -177,7 +177,42 @@ function switchToProfile() {
 function switchToEditProfile() {
     document.querySelector('#v-pills-edit-profile-tab').click();
 }
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.notification-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const contentSection = this.querySelector('.content-section');
+            const notificationId = this.dataset.notificationId;
+            
+            // Toggle content visibility
+            contentSection.style.display = contentSection.style.display === 'none' ? 'block' : 'none';
+            
+            // Mark as read if unread
+            if (this.classList.contains('unread-highlight')) {
+                fetch('../func/update_notification_dosen.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `notification_id=${notificationId}`
+                });
+                this.classList.remove('unread-highlight');
+                this.querySelector('.badge')?.remove();
+            }
+        });
+    });
+});
 
+function showUnreadNotifications() {
+    document.querySelectorAll('.notification-card').forEach(card => {
+        card.style.display = card.classList.contains('unread-highlight') ? 'block' : 'none';
+    });
+}
+
+function showAllNotifications() {
+    document.querySelectorAll('.notification-card').forEach(card => {
+        card.style.display = 'block';
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     const reportForm = document.querySelector('form[action="../func/report.php"]');
@@ -718,38 +753,44 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
 <div class="tab-pane fade p-3 border rounded bg-light" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
     <div class="d-flex gap-2 mb-4">
         <button class="btn btn-primary" onclick="showAllNotifications()">All Notifications</button>
-        <button class="btn btn-warning" onclick="showUnreadNotifications()">Not Read Yet</button>
+        <button class="btn btn-warning" onclick="showUnreadNotifications()">Not Read yet</button>
     </div>
     
     <div class="notification-list">
-        <?php
-        try {
-            $user_id = $_SESSION['user_id'];
-            $query = "SELECT title, content, id FROM mail_notif_dosen 
-                     WHERE mail_type = :user_id 
-                     ORDER BY id DESC";
-            
-            $stmt = $koneksi->prepare($query);
-            $stmt->bindParam(':user_id', $user_id);
-            $stmt->execute();
-            
-            while ($notification = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                echo '<div class="card mb-3">
-                        <div class="card-body">
-                            <h6 class="card-title">' . htmlspecialchars($notification['title']) . '</h6>
-                            <p class="card-text text-muted">' . htmlspecialchars($notification['content']) . '</p>
+    <?php 
+    try {
+        $user_id = $_SESSION['user_id'];
+        $query = "SELECT id, title, content, is_read FROM mail_notif_dosen 
+                 WHERE mail_type = :user_id 
+                 ORDER BY id DESC";
+        $stmt = $koneksi->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        
+        while ($notification = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $unreadClass = $notification['is_read'] ? '' : 'unread-highlight';
+            echo '<div class="notification-card ' . $unreadClass . '" data-notification-id="' . $notification['id'] . '">
+                    <div class="card mb-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="card-title mb-0">' . htmlspecialchars($notification['title']) . '</h6>
+                            ' . (!$notification['is_read'] ? '<span class="badge bg-primary">New</span>' : '') . '
                         </div>
-                    </div>';
-            }
-            
-            if ($stmt->rowCount() == 0) {
-                echo '<div class="alert alert-info">Tidak ada notifikasi</div>';
-            }
-            
-        } catch (PDOException $e) {
-            echo '<div class="alert alert-danger">Error fetching notifications: ' . $e->getMessage() . '</div>';
+                        <div class="content-section" style="display: none;">
+                            <div class="card-body">
+                                <p class="card-text">' . htmlspecialchars($notification['content']) . '</p>
+                            </div>
+                        </div>
+                    </div>
+                  </div>';
         }
-        ?>
+        
+        if ($stmt->rowCount() == 0) {
+            echo '<div class="alert alert-info">There is No notification</div>';
+        }
+    } catch (PDOException $e) {
+        echo '<div class="alert alert-danger">Error fetching notifications: ' . $e->getMessage() . '</div>';
+    }
+    ?>
     </div>
 </div>
 
