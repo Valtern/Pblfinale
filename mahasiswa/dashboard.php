@@ -1034,14 +1034,14 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
     <div class="table-responsive">
         <h5>List of Penalties</h5>
         <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Violation Number</th>
-                    <th>Violation Name</th>
-                    <th>Punishment</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
+    <thead>
+        <tr>
+            <th style="width: 15%">Violation Number</th>
+            <th style="width: 25%">Violation Name</th>
+            <th style="width: 50%">Punishment</th>
+            <th style="width: 10%">Status</th>
+        </tr>
+    </thead>
             <tbody>
                 <?php
                 try {
