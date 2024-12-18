@@ -687,7 +687,7 @@ function showCheckCompensation() {
             <i class="fa fa-exclamation-triangle"></i> History
         </button>
         <button class="nav-link" id="v-pills-compensation-tab" data-bs-toggle="pill" data-bs-target="#v-pills-compensation" type="button" role="tab" aria-controls="v-pills-compensation" aria-selected="false">
-            <i class="fa fa-history"></i> Compensation
+            <i class="fa fa-history"></i> Violation list
         </button>
     </div>
 
@@ -1080,7 +1080,7 @@ function showCheckCompensation() {
 
 <div class="tab-pane fade p-3 border rounded bg-light" id="v-pills-compensation" role="tabpanel">
     <div class="compensation">
-        <h5>Compensation History</h5>
+        <h5>Violation History</h5>
         <table class="table">
             <thead>
                 <tr>
@@ -1121,7 +1121,7 @@ function showCheckCompensation() {
 <div class="check-compensation-content d-none">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title mb-4">Edit Compensation</h5>
+            <h5 class="card-title mb-4">Edit Punishment</h5>
             <form id="editCompensationForm">
                 <input type="hidden" id="history-id" name="history_id">
                 <div class="mb-3">
@@ -1132,10 +1132,23 @@ function showCheckCompensation() {
                         <option value="Berat">Heavy</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Punishment</label>
-                    <input type="text" class="form-control" name="hukuman" id="edit-hukuman" required>
-                </div>
+<div class="mb-3">
+    <label class="form-label">Punishment</label>
+    <select class="form-control" name="hukuman" id="edit-hukuman" required>
+        <?php 
+        try {
+            $stmt = $koneksi->prepare("SELECT punishment_name FROM punishment_list");
+            $stmt->execute();
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                echo "<option value='" . htmlspecialchars($row['punishment_name']) . "'>" . 
+                     htmlspecialchars($row['punishment_name']) . "</option>";
+            }
+        } catch(PDOException $e) {
+            echo "<option value=''>Error loading punishments</option>";
+        }
+        ?>
+    </select>
+</div>
                 <div class="mb-3">
                     <label class="form-label">Status</label>
                     <select class="form-select" name="status" id="edit-status" required>
