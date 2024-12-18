@@ -753,7 +753,6 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
 <div class="tab-pane fade p-3 border rounded bg-light" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
     <div class="d-flex gap-2 mb-4">
         <button class="btn btn-primary" onclick="showAllNotifications()">All Notifications</button>
-        <button class="btn btn-warning" onclick="showUnreadNotifications()">Not Read yet</button>
     </div>
     
     <div class="notification-list">
