@@ -11,12 +11,24 @@ session_start();
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-secondary bg-secondary sticky-top py-0 mb-3">
-        <nav class="nav navbar-nav">
-            <a class="navbar-brand ms-4" href="index.php"><img src="img/brand1.png" class="" style="width: 182px; height: 29px;" alt=""></a>
-        </nav>
-        <a class="navbar-brand" href="index.php"><img src="" alt=""></a>
-    </nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid border-bottom border-2">
+        <a class="navbar-brand" href="index.php">
+            <img src="img/brand1.png" alt="Logo" style="height: 30px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#"></a>
+        </li>
+    </ul>
+</div>
+
+    </div>
+</nav>
 
 
     <div class="d-block justify-content-center mt-5">
