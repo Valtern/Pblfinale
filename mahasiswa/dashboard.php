@@ -937,7 +937,7 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
                     }
                     
                     if ($stmt->rowCount() == 0) {
-                        echo "<tr><td colspan='5' class='text-center'>Tidak ada laporan yang diterima</td></tr>";
+                        echo "<tr><td colspan='5' class='text-center'>There are no received reports!</td></tr>";
                     }
                 } catch(PDOException $e) {
                     echo "<tr><td colspan='5' class='text-danger'>Error: " . $e->getMessage() . "</td></tr>";
