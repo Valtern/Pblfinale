@@ -1110,7 +1110,7 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
                     }
                     
                     if ($stmt->rowCount() == 0) {
-                        echo "<tr><td colspan='4' class='text-center'>Tidak ada hukuman yang tercatat</td></tr>";
+                        echo "<tr><td colspan='4' class='text-center'>No recorded punishment</td></tr>";
                     }
                     
                 } catch(PDOException $e) {
