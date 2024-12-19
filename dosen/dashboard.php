@@ -863,7 +863,7 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
 
 <div class="tab-pane fade p-3 border rounded bg-light" id="v-pills-history" role="tabpanel" aria-labelledby="v-pills-history-tab">
     <div class="nav nav-tabs mb-4" role="tablist">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#history-diajukan" type="button" role="tab">Diajukan</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#history-diajukan" type="button" role="tab">Filed</button>
     </div>
 
     <div class="tab-content">
@@ -876,8 +876,8 @@ document.getElementById('profile-photo').addEventListener('change', function(e) 
                 <th>Violation Number</th>
                     <th>Violation Name</th>
                     <th>Weight</th>
-                    <th>Status</th>
-                    <th>Details</th>
+                    <th style="width: 8%">Status</th>
+                    <th style="width: 8%">Details</th>
                 </tr>
             </thead>
             <tbody>
