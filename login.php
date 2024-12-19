@@ -78,7 +78,7 @@ session_start();
             <input type="checkbox" class="form-check-input" name="remember"> Remember me
         </label>
     </div>
-    <button type="submit" class="btn btn-primary mx-auto d-block">Masuk</button>
+    <button type="submit" class="btn btn-primary mx-auto d-block">Login</button>
 </form>
 
         </div>
