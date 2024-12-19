@@ -109,12 +109,12 @@ class AuthenticationHandler {
             }
             
             $_SESSION['error'] = "Email atau password salah!";
-            header("Location: ../index.php");
+            header("Location: ../login.php");
             exit();
             
         } catch (PDOException $e) {
             $_SESSION['error'] = "Database error: " . $e->getMessage();
-            header("Location: ../index.php");
+            header("Location: ../login.php");
             exit();
         }
     }
